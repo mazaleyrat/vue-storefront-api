@@ -6,7 +6,7 @@ WORKDIR /var/www
 
 RUN apk add --no-cache imagemagick
 
-COPY ./package.json ./
+COPY package.json /var/www
 
 RUN apk add --no-cache --virtual .build-deps ca-certificates wget git && yarn install --no-cache && apk del .build-deps
 
