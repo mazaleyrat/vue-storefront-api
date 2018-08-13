@@ -14,6 +14,4 @@ RUN apk add --no-cache --virtual .build-deps ca-certificates wget git && yarn in
 
 COPY ./vue-storefront-api.sh /usr/local/bin/
 
-COPY package.json /usr/local/bin/
-
 CMD ["vue-storefront-api.sh"]
