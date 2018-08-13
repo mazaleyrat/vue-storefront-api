@@ -10,6 +10,6 @@ COPY . /var/www/
 
 RUN apk add --no-cache --virtual .build-deps ca-certificates wget git && yarn install --no-cache && apk del .build-deps
 
-COPY docker/vue-storefront-api/vue-storefront-api.sh /usr/local/bin/
+COPY ./vue-storefront-api.sh /usr/local/bin/
 
 CMD ["vue-storefront-api.sh"]
