@@ -145,12 +145,14 @@
       "allowedHosts": [
         ".*divante.pl",
         ".*vuestorefront.io",
-        "localhost"
+        "localhost",
+        "vuestorefront.default.svc.cluster.local"
       ],
       "trustedHosts": [
         ".*divante.pl",
         ".*vuestorefront.io",
-        "localhost"
+        "localhost",
+        "vuestorefront.default.svc.cluster.local"
       ]
     },
     "keepDownloads": true,
