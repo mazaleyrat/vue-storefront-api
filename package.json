@@ -67,7 +67,7 @@
     "kue": "^0.11.6",
     "lodash": "^4.17.10",
     "magento2-rest-client": "github:DivanteLtd/magento2-rest-client",
-    "migrate": "^1.5.0",
+    "migrate": "^1.6.0",
     "mime-types": "^2.1.18",
     "morgan": "^1.9.0",
     "oauth-1.0a": "^1.0.1",
@@ -76,7 +76,7 @@
     "soap": "^0.23.0",
     "unirest": "^0.5.1",
     "winston": "^2.4.2",
-    "pm2": "^2.10.4"    
+    "pm2": "^2.10.4"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
