@@ -18,9 +18,10 @@ app.use(morgan('dev'));
 app.use('/media', express.static(__dirname + config[config.platform].assetPath))
 
 // 3rd party middleware
-app.use(cors({
-    exposedHeaders: config.corsHeaders,
-}));
+//app.use(cors({
+//    exposedHeaders: config.corsHeaders,
+//}));
+app.use(cors());
 
 app.use(bodyParser.json({
     limit : config.bodyLimit
