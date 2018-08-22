@@ -2,9 +2,7 @@
 set -e
 
 yarn install || exit $?
-
-yarn restore
-yarn migrate
+yarn setup || exit $?
 
 if [ "$VS_ENV" = 'dev' ]; then
   yarn dev
