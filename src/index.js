@@ -18,10 +18,9 @@ app.use(morgan('dev'));
 app.use('/media', express.static(__dirname + config[config.platform].assetPath))
 
 // 3rd party middleware
-//app.use(cors({
-//    exposedHeaders: config.corsHeaders,
-//}));
-app.use(cors());
+app.use(cors({
+    exposedHeaders: config.corsHeaders,
+}));
 
 app.use(bodyParser.json({
     limit : config.bodyLimit
@@ -38,11 +37,10 @@ initializeDb( db => {
     app.use('/img', img({ config, db }));
 
     const port = process.env.PORT || config.server.port
-    //const host = process.env.HOST || config.server.host
-    //app.server.listen(port, host, () => {
-    //    console.log(`Vue Storefront API started at http://${host}:${port}`);
-    //});
-    app.server.listen(port);
+    const host = process.env.HOST || config.server.host
+    app.server.listen(port, host, () => {
+        console.log(`Vue Storefront API started at http://${host}:${port}`);
+    });
 });
 
 export default app;
