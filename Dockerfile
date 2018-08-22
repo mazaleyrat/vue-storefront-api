@@ -14,4 +14,6 @@ RUN apk add --no-cache --virtual .build-deps ca-certificates wget git && yarn in
 
 COPY ./docker/vue-storefront-api/vue-storefront-api.sh /usr/local/bin/
 
+EXPOSE 8080
+
 CMD ["vue-storefront-api.sh"]
