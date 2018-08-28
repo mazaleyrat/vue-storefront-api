@@ -146,13 +146,17 @@
         ".*divante.pl",
         ".*vuestorefront.io",
         "localhost",
-        "vuestorefront.default.svc.cluster.local"
+        "vuestorefront.default.svc.cluster.local",
+        "www.lebonflacon.com",
+        "api.lebonflacon.com"
       ],
       "trustedHosts": [
         ".*divante.pl",
         ".*vuestorefront.io",
         "localhost",
-        "vuestorefront.default.svc.cluster.local"
+        "vuestorefront.default.svc.cluster.local",
+        "www.lebonflacon.com",
+        "api.lebonflacon.com"
       ]
     },
     "keepDownloads": true,
