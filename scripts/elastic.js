@@ -1,68 +1,55 @@
-'use harmony'
-
-const CommandRouter = require('command-router')
-const cli = CommandRouter()
-
-const util = require('util');
+const program = require('commander')
 const config = require('config').elasticsearch
 const spawnSync = require('child_process').spawnSync
 
-cli.option({
-  name: 'input-file',
-  default: 'var/catalog.json',
-  type: String
-})
-
-cli.option({
-  name: 'input-index',
-  default: 'vue_storefront_catalog',
-  type: String
-})
-
-cli.option({
-  name: 'output-file',
-  default: 'var/catalog.json',
-  type: String
-})
-
-cli.option({
-  name: 'output-index',
-  default: 'vue_storefront_catalog_temp',
-  type: String
-})
-
-function stdOutErr(stdout, stderr) {
-  if (stdout.length > 0)
-    console.log(stdout.toString('utf8'));
-  if (stderr.length > 0)
-    console.error(stderr.toString('utf8'));
+function stdOutErr (stdout, stderr) {
+  if (stdout.length > 0) { console.log(stdout.toString('utf8')) }
+  if (stderr.length > 0) { console.error(stderr.toString('utf8')) }
 }
 
-cli.command('dump', () => {
-  var input = util.format('http://%s:%d/%s', config.host, config.port, cli.options['input-index']);
+program
+  .command('dump')
+  .option('--input-index <inputIndex>', 'index to dump', 'vue_storefront_catalog')
+  .option('--output-file <outputFile>', 'path to the output file', 'var/catalog.json')
+  .action((cmd) => {
+    const input = `http://${config.host}:${config.port}/${cmd.inputIndex}`
 
-  var child = spawnSync('node', ['node_modules/elasticdump/bin/elasticdump', '--input=' + input, '--output=' + cli.options['output-file']]);
-  stdOutErr(child.stdout, child.stderr);
-})
+    const child = spawnSync('node', [
+      'node_modules/elasticdump/bin/elasticdump',
+      `--input=${input}`,
+      `--output=${cmd.outputFile}`
+    ])
+    stdOutErr(child.stdout, child.stderr)
+  })
 
-cli.command('restore', () => {
-  var output = util.format('http://%s:%d/%s', config.host, config.port, cli.options['output-index']);
+program
+  .command('restore')
+  .option('--output-index <outputIndex>', 'index to restore', 'vue_storefront_catalog')
+  .option('--input-file <inputFile>', 'path to the input file', 'var/catalog.json')
+  .action((cmd) => {
+    const output = `http://${config.host}:${config.port}/${cmd.outputIndex}`
 
-  var child = spawnSync('node', ['node_modules/elasticdump/bin/elasticdump', '--input=' + cli.options['input-file'], '--output=' + output]);
-  stdOutErr(child.stdout, child.stderr);
-})
+    const child = spawnSync('node', [
+      'node_modules/elasticdump/bin/elasticdump',
+      `--input=${cmd.inputFile}`,
+      `--output=${output}`
+    ])
+    stdOutErr(child.stdout, child.stderr)
+  })
 
-cli.on('notfound', (action) => {
-  console.error('I don\'t know how to: ' + action)
-  process.exit(1)
-})
+program
+  .on('command:*', () => {
+    console.error('Invalid command: %s\nSee --help for a list of available commands.', program.args.join(' '));
+    process.exit(1);
+  });
+
+program
+  .parse(process.argv)
 
 process.on('unhandledRejection', (reason, p) => {
-  console.log("Unhandled Rejection at: Promise ", p, " reason: ", reason);
-});
+  console.log('Unhandled Rejection at: Promise ', p, ' reason: ', reason)
+})
 
-process.on('uncaughtException', function(exception) {
-  console.log(exception);
-});
-
-cli.parse(process.argv);
+process.on('uncaughtException', (exception) => {
+  console.log(exception)
+})

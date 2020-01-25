@@ -4,9 +4,19 @@ dist/
 npm-debug.log
 .vscode/
 .idea/
-yarn.lock
 api_start.sh
 api_test.sh
 package-lock.json
 src/config.json
+<<<<<<< HEAD
+=======
+config/local.json
+config/certs/*.pem
+var/magento2-sample-data/
+>>>>>>> upstream/master
 .migrate
+*.iml
+/docker/elasticsearch/data/
+!/docker/elasticsearch/data/.gitkeep
+/docker/elasticsearch7/data/
+!/docker/elasticsearch7/data/.gitkeep

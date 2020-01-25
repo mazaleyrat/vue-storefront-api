@@ -7,7 +7,7 @@
     "host": "es1.default.svc.cluster.local",
     "port": 9200,
     "user": "elastic",
-    "password": "changeme",
+    "password": "minda",
     "indices": [
       "vue_storefront_catalog",
       "vue_storefront_catalog_de",
@@ -25,7 +25,7 @@
     "it"
   ],
   "storeViews": {
-    "multistore": true,
+    "multistore": false,
     "mapStoreUrlsFor": [
       "de",
       "it"
@@ -117,7 +117,7 @@
     }
   },
   "magento2": {
-    "url": "http://magento2.demo-1.xyz.com",
+    "url": "https://app.lebonflacon.com",
     "imgUrl": "https://api.lebonflacon.com/media/catalog/product",
     "assetPath": "/../var/magento2-sample-data/pub/media",
     "magentoUserName": "",
@@ -125,11 +125,11 @@
     "httpUserName": "",
     "httpUserPassword": "",
     "api": {
-      "url": "http://demo-magento2.vuestorefront.io/rest",
-      "consumerKey": "byv3730rhoulpopcq64don8ukb8lf2gq",
-      "consumerSecret": "u9q4fcobv7vfx9td80oupa6uhexc27rb",
-      "accessToken": "040xx3qy7s0j28o3q0exrfop579cy20m",
-      "accessTokenSecret": "7qunl3p505rubmr7u1ijt7odyialnih9"
+      "url": "https://app.lebonflacon.com/rest",
+      "consumerKey": "alva6h6hku9qxrpfe02c2jalopx7od1q",
+      "consumerSecret": "9tgfpgoojlx9tfy21b8kw7ssfu2aynpm",
+      "accessToken": "rw5w0si9imbu45h3m9hkyrfr4gjina8q",
+      "accessTokenSecret": "00y9dl4vpxgcef3gn5mntbxtylowjcc9"
     }
   },
   "imageable": {
@@ -148,7 +148,9 @@
         "localhost",
         "vuestorefront.default.svc.cluster.local",
         "www.lebonflacon.com",
-        "api.lebonflacon.com"
+        "api.lebonflacon.com",
+        "app.lebonflacon.com",
+        ".*lebonflacon.com"
       ],
       "trustedHosts": [
         ".*divante.pl",
@@ -156,7 +158,9 @@
         "localhost",
         "vuestorefront.default.svc.cluster.local",
         "www.lebonflacon.com",
-        "api.lebonflacon.com"
+        "api.lebonflacon.com",
+        "app.lebonflacon.com",
+        ".*lebonflacon.com"
       ]
     },
     "keepDownloads": true,

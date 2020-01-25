@@ -1,48 +1,48 @@
-import request from "request";
-import RequestHandler from "./imageable/lib/request-handler";
+// @ts-check
+import CacheFactory from '../image/cache/factory';
+import ActionFactory from '../image/action/factory';
 
-export default ({ config, db }) => function (req, res, body) {
+const asyncMiddleware = fn => (req, res, next) => {
+  Promise.resolve(fn(req, res, next)).catch(next);
+};
 
-    // Image proxy for products
-    if (!(req.method == 'GET')) {
-        throw new Error('ERROR: ' + req.method + ' request method is not supported.');
+export default ({ config, db }) =>
+  asyncMiddleware(async (req, res, next) => {
+    if (!(req.method === 'GET')) {
+      res.set('Allow', 'GET');
+      return res.status(405).send('Method Not Allowed');
+    }
+    const cacheFactory = new CacheFactory(config, req)
+
+    req.socket.setMaxListeners(config.imageable.maxListeners || 50);
+
+    let imageBuffer
+
+    const actionFactory = new ActionFactory(req, res, next, config)
+    const imageAction = actionFactory.getAdapter(config.imageable.action.type)
+    imageAction.getOption()
+    imageAction.validateOptions()
+    imageAction.isImageSourceHostAllowed()
+    imageAction.validateMIMEType()
+
+    const cache = cacheFactory.getAdapter(config.imageable.caching.type)
+
+    if (config.imageable.caching.active && await cache.check()) {
+      await cache.getImageFromCache()
+      imageBuffer = cache.image
+    } else {
+      await imageAction.prossesImage()
+
+      if (config.imageable.caching.active) {
+        cache.image = imageAction.imageBuffer
+        await cache.save()
+      }
+
+      imageBuffer = imageAction.imageBuffer
     }
 
-    // if we want to get by product sku or name only
-    /**
-    const elasticsearch = require('elasticsearch');
-    const client = new elasticsearch.Client({
-        host: {
-          host: config.elasticsearch.host,
-          port: config.elasticsearch.port
-        },
-        log: 'trace'
-    });
-    */
-
-    let urlParts = req.url.split('/');
-
-    if (urlParts.length < 4) {
-        throw new Error('Please provide following parameters: /img/<width>/<height>/<action:crop,fit,resize,identify>/<relative_url>');
-    }
-
-    const imgUrl = config[config.platform].imgUrl + '/' + urlParts.slice(4).join('/'); // full original image url
-
-    let rh = new RequestHandler(config.imageable, {
-        before: function (stats) { },
-        after: function (stats, returnValueOfBefore, err) { }
-    });
-
-    let width = parseInt(urlParts[1]);
-    let height = parseInt(urlParts[2]);
-    let action = urlParts[3];
-
-    console.log(imgUrl + ' / ' + action + '/' + width + '/' + height);
-    req.query.size = width + 'x' + height;
-    req.query.url = imgUrl;
-    req.originalUrl = '/' + (action ? action : 'fit') + '?url=' + encodeURIComponent(imgUrl) + '&size=' + width + 'x' + height;
-    console.log(req.originalUrl);
-    req.url = req.originalUrl;
-
-    return rh.handle(req, res);
-}
+    return res
+      .type(imageAction.mimeType)
+      .set({ 'Cache-Control': `max-age=${imageAction.maxAgeForResponse}` })
+      .send(imageBuffer);
+  });

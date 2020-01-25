@@ -1,51 +1,36 @@
-'use harmony'
-
-const CommandRouter = require('command-router')
-const cli = CommandRouter()
-
-const util = require('util');
+const program = require('commander')
 const config = require('config').redis
-const kue = require('kue');
+const kue = require('kue')
 
-cli.option({
-  name: 'port',
-  alias: 'p',
-  default: 3000,
-  type: Number
-})
+program
+  .command('dashboard')
+  .option('-p|--port <port>', 'port on which to run kue dashboard', 3000)
+  .option('-q|--prefix <prefix>', 'prefix', 'q')
+  .action((cmd) => {
+    kue.createQueue({
+      redis: config,
+      prefix: cmd.prefix
+    })
 
-cli.option({
-  name: 'prefix',
-  alias: 'q',
-  default: 'q',
-  type: String
-})
-
-cli.command('dashboard', () => {
-
-  kue.createQueue({
-    redis: {
-      host: config.host,
-      port: config.port,
-      db: config.db
-    },
-    prefix: cli.options.prefix
+    kue.app.listen(cmd.port)
   });
 
-  kue.app.listen(cli.options.port);
-})
+program
+  .on('command:*', () => {
+    console.error('Invalid command: %s\nSee --help for a list of available commands.', program.args.join(' '));
+    process.exit(1);
+  });
 
-cli.on('notfound', (action) => {
-  console.error('I don\'t know how to: ' + action)
-  process.exit(1)
-})
+program
+  .parse(process.argv)
 
 process.on('unhandledRejection', (reason, p) => {
-  console.log("Unhandled Rejection at: Promise ", p, " reason: ", reason);
-});
+  console.error(`Unhandled Rejection at: Promise ${p}, reason: ${reason}`)
+  // application specific logging, throwing an error, or other logic here
+})
 
-process.on('uncaughtException', function(exception) {
-  console.log(exception);
-});
-
-cli.parse(process.argv);
+process.on('uncaughtException', (exception) => {
+  console.error(exception) // to see your exception details in the console
+  // if you are on production, maybe you can send the exception details to your
+  // email as well ?
+})
